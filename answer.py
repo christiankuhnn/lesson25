@@ -1,5 +1,3 @@
-from itertools import permutations
-
 def read_input_file(filename):
     with open(filename) as f:
         distances = [list(map(int, line.split())) for line in f]
@@ -7,24 +5,21 @@ def read_input_file(filename):
 
 def compute_tsp(distances):
     n = len(distances)
-    vertices = set(range(n))
-    min_cost = float('inf')
-    min_tour = None
-    
-    # Generate all possible tours
-    for tour in permutations(vertices):
-        cost = 0
-        # Compute the total cost of the current tour
-        for i in range(n-1):
-            cost += distances[tour[i]][tour[i+1]]
-        cost += distances[tour[-1]][tour[0]] # add the cost of returning to the starting vertex
-        
-        # Update the best tour and cost so far
-        if cost < min_cost:
-            min_cost = cost
-            min_tour = tour
-    
-    return min_tour, min_cost
+    visited = [False] * n
+    tour = [0] * n
+    visited[0] = True
+    tour[0] = 0
+    for i in range(1, n):
+        nearest = None
+        for j in range(n):
+            if not visited[j] and (nearest is None or distances[tour[i-1]][j] < distances[tour[i-1]][nearest]):
+                nearest = j
+        tour[i] = nearest
+        visited[nearest] = True
+    cost = 0
+    for i in range(n):
+        cost += distances[tour[i]][tour[(i+1)%n]]
+    return tour, cost
 
 def print_tsp_solution(tour, cost):
     for vertex in tour:
