@@ -7,12 +7,12 @@ def read_input_file(filename):
 
 def compute_tsp(distances):
     n = len(distances)
-    vertices = list(range(n))
-    permutations = itertools.permutations(vertices)
     best_tour = None
     best_cost = float("inf")
-    for tour in permutations:
-        cost = sum(distances[tour[i]][tour[i+1]] for i in range(n-1))
+    for tour in itertools.permutations(range(n)):
+        cost = 0
+        for i in range(n-1):
+            cost += distances[tour[i]][tour[i+1]]
         cost += distances[tour[-1]][tour[0]]
         if cost < best_cost:
             best_cost = cost
